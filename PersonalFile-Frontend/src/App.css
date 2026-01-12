@@ -1,0 +1,116 @@
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.bg {
+    animation: slide 3s ease-in-out infinite alternate;
+    background-image: linear-gradient(-60deg, #b08968 50%, #ede0d4 50%);
+    bottom: 0;
+    left: -50%;
+    opacity: .5;
+    position: fixed;
+    right: -50%;
+    top: 0;
+    z-index: -1;
+}
+
+.bg2 {
+    animation-direction: alternate-reverse;
+    animation-duration: 4s;
+}
+
+.bg3 {
+    animation-duration: 5s;
+}
+
+@keyframes slide {
+    0% {
+        transform: translateX(-25%);
+    }
+
+    100% {
+        transform: translateX(25%);
+    }
+}
+
+.login-box {
+    background: rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(5px);
+    padding: 25px;
+    border: 1px solid #e6ccb2;
+    width: 100%;
+    max-width: 500px;
+    text-align: center;
+}
+
+.login-box h1,
+.login-box h2,
+.login-box h3 {
+    color: #9b2226;
+    font-size: 17px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+}
+
+.login-box h2 {
+    color: #bb3e03;
+    font-size: 14px;
+}
+
+.login-box h3 {
+    color: #b08968;
+    font-size: 14px;
+}
+
+.form-content {
+    display: flex;
+    flex-direction: column;
+    gap: 11px;
+    margin-top: 20px;
+}
+
+.form-content input {
+    padding: 12px;
+    border: 1px solid #efebe6;
+    font-size: 11px;
+    text-transform: uppercase;
+}
+
+button {
+    padding: 12px;
+    background-color: #c4876b;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 11px;
+}
+
+button:hover {
+    background-color: #333;
+}
+
+.toggle-link {
+    margin-top: 5px;
+    text-decoration: underline;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 11px;
+    color: #03045e;
+}
+
+.verifying {
+    font-size: 13px;
+    text-transform: uppercase;
+}
+
+@media (min-width: 768px) {
+    .login-box {
+        padding: 25px;
+    }
+}

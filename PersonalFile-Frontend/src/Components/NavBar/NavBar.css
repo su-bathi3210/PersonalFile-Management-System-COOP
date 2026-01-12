@@ -1,0 +1,101 @@
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 50px;
+    width: 100%;
+    background: linear-gradient(135deg, #b08968 0%, #ede0d4 100%);
+    flex-wrap: wrap;
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.header h1 {
+    font-size: 17px;
+    font-weight: bold;
+    margin-top: 8px;
+    color: white;
+    text-transform: uppercase;
+}
+
+.header p {
+    text-transform: uppercase;
+    font-size: 12px;
+    color: #f0efef;
+    font-weight: bold;
+    margin: 6px 0 0 0;
+}
+
+.header .logo {
+    height: 75px;
+    width: auto;
+    animation: spin 8s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.header-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 3px;
+    margin-top: 10px;
+}
+
+
+.header-right p {
+    font-size: 11px;
+    color: #f0efef;
+    margin-right: -5px;
+}
+
+.header-right-notification {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.user-profile {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    position: relative;
+    margin-left: 20px;
+    color: #fff;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.avatar-circle {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    background-color: #b08968;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 12px;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.username {
+    margin-right: 5px;
+    font-size: 12px;
+    color: #000;
+}
