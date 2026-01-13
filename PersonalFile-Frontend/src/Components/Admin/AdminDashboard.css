@@ -1,0 +1,131 @@
+/* --- Root Variables & Reset --- */
+:root {
+    --primary: #1d4ed8;
+    --primary-hover: #1e40af;
+    --success: #16a34a;
+    --success-hover: #15803d;
+    --danger: #dc2626;
+    --danger-bg: #fee2e2;
+    --border-color: #e5e7eb;
+    --text-main: #374151;
+    --bg-gray: #f3f4f6;
+}
+
+.admin-container {
+    font-family: 'Inter', -apple-system, sans-serif;
+    color: var(--text-main);
+}
+
+/* --- Layout --- */
+.max-w-7xl {
+    max-width: 80rem;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.shadow-lg {
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+/* --- Form Elements --- */
+input,
+select {
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    font-size: 0.95rem;
+    color: #1f2937;
+}
+
+input:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(29, 78, 216, 0.1);
+}
+
+input:disabled {
+    background-color: #f9fafb;
+    cursor: not-allowed;
+    color: #9ca3af;
+}
+
+label {
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
+    color: #4b5563;
+}
+
+/* --- Table Styling --- */
+table {
+    border-collapse: separate;
+    border-spacing: 0;
+    width: 100%;
+}
+
+th {
+    background-color: #f9fafb;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+    color: #6b7280;
+}
+
+tr:last-child td:first-child {
+    border-bottom-left-radius: 0.5rem;
+}
+
+tr:last-child td:last-child {
+    border-bottom-right-radius: 0.5rem;
+}
+
+td {
+    transition: background-color 0.2s;
+}
+
+/* --- Buttons --- */
+button {
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+button:active {
+    transform: translateY(1px);
+}
+
+/* --- Custom Scrollbar for Table --- */
+.overflow-x-auto::-webkit-scrollbar {
+    height: 8px;
+}
+
+.overflow-x-auto::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+.overflow-x-auto::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 4px;
+}
+
+.overflow-x-auto::-webkit-scrollbar-thumb:hover {
+    background: #bbb;
+}
+
+/* --- Animations --- */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+form,
+.overflow-x-auto {
+    animation: fadeIn 0.3s ease-out;
+}

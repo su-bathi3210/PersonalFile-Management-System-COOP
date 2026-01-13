@@ -1,36 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { useNavigate, Link } from "react-router-dom";
 import "./NavBar.css";
 import Logo from "../../Assets/DCDLogo.png";
-import api from "../../API/Axios";
 
 export default function NavBar() {
-    const [user, setUser] = useState(null);
     const navigate = useNavigate();
-
-    const getInitials = (name) => {
-        if (!name) return "U";
-        return name
-            .split(" ")
-            .map((n) => n[0].toUpperCase())
-            .join("")
-            .slice(0, 2);
-    };
-
-    useEffect(() => {
-        const fetchUserProfile = async () => {
-            const token = localStorage.getItem("token");
-            if (token) {
-                try {
-                    const res = await api.get("/employee/auth/profile");
-                    setUser(res.data);
-                } catch (err) {
-                    console.error("Failed to fetch user profile", err);
-                }
-            }
-        };
-        fetchUserProfile();
-    }, []);
 
     const handleLogout = () => {
         localStorage.removeItem("token");
@@ -53,10 +27,10 @@ export default function NavBar() {
             <div className="header-right">
                 <div className="user-profile" onClick={handleLogout} style={{ cursor: "pointer" }}>
                     <div className="avatar-circle">
-                        {getInitials(user?.name)}
+                        A
                     </div>
                     <span className="username">
-                        {user?.name || "Loading..."}
+                        Admin
                     </span>
                 </div>
             </div>

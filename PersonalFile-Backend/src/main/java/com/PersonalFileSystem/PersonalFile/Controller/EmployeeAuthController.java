@@ -5,6 +5,8 @@ import com.PersonalFileSystem.PersonalFile.Exception.EmailNotRegisteredException
 import com.PersonalFileSystem.PersonalFile.Model.Employee;
 import com.PersonalFileSystem.PersonalFile.Repository.EmployeeRepository;
 import com.PersonalFileSystem.PersonalFile.Service.OtpService;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,52 +18,85 @@ import java.util.Map;
 public class EmployeeAuthController {
 
     private final EmployeeRepository employeeRepository;
-
     private final OtpService otpService;
-
     private final JwtUtil jwtUtil;
 
-    public EmployeeAuthController(EmployeeRepository employeeRepository, OtpService otpService, JwtUtil jwtUtil) {
+    public EmployeeAuthController(EmployeeRepository employeeRepository,
+                                  OtpService otpService,
+                                  JwtUtil jwtUtil) {
         this.employeeRepository = employeeRepository;
         this.otpService = otpService;
         this.jwtUtil = jwtUtil;
     }
 
+    // ===================== REQUEST OTP =====================
     @PostMapping("/request-otp")
-    public String requestOtp(@RequestParam String email) {
+    public ResponseEntity<?> requestOtp(@RequestParam String email) {
+        email = email.toLowerCase();
 
-        employeeRepository.findByEmail(email)
-                .orElseThrow(() ->
-                        new EmailNotRegisteredException(
-                                "Email is not registered. Please contact admin."
-                        )
-                );
-        String otp = otpService.generateOtp(email);
-        return "OTP sent to email (simulate): " + otp;
+        if (!employeeRepository.existsByEmail(email)) {
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body("Email is not registered. Please contact admin.");
+        }
+
+        otpService.generateOtp(email);
+        return ResponseEntity.ok("OTP sent successfully");
     }
 
+    // ===================== VERIFY OTP =====================
     @PostMapping("/verify-otp")
-    public ResponseEntity<?> verifyOtp(@RequestParam String email, @RequestParam String otp) {
-        boolean isValid = otpService.validateOtp(email, otp);
-        if (!isValid) {
-            throw new RuntimeException("Invalid OTP");
+    public ResponseEntity<?> verifyOtp(@RequestParam String email,
+                                       @RequestParam String otp) {
+        email = email.toLowerCase();
+
+        if (!otpService.validateOtp(email, otp)) {
+            return ResponseEntity
+                    .status(HttpStatus.UNAUTHORIZED)
+                    .body("Invalid OTP");
         }
+
+        // Employee MUST exist here
+        if (!employeeRepository.existsByEmail(email)) {
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body("Employee profile not found");
+        }
+
         String token = jwtUtil.generateToken(email, "ROLE_EMPLOYEE");
         return ResponseEntity.ok(Map.of("token", token));
     }
 
+    // ===================== GET PROFILE =====================
     @GetMapping("/profile")
-    public Employee getMyProfile(Authentication authentication) {
-        String email = authentication.getName();
+    @PreAuthorize("hasRole('EMPLOYEE')")
+    public ResponseEntity<Object> getMyProfile(Authentication authentication) {
+        String email = authentication.getName().toLowerCase();
+
         return employeeRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("Employee profile not found"));
+                .<ResponseEntity<Object>>map(ResponseEntity::ok)
+                .orElse(ResponseEntity
+                        .status(HttpStatus.NOT_FOUND)
+                        .body("Employee profile not found"));
     }
 
+
+    // ===================== UPDATE PROFILE =====================
     @PutMapping("/profile/update")
-    public Employee updateMyPersonalDetails(Authentication authentication, @RequestBody Employee updatedDetails) {
-        String email = authentication.getName();
+    @PreAuthorize("hasRole('EMPLOYEE')")
+    public ResponseEntity<?> updateMyPersonalDetails(Authentication authentication,
+                                                     @RequestBody Employee updatedDetails) {
+
+        String email = authentication.getName().toLowerCase();
+
         Employee employee = employeeRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("Employee not found"));
+                .orElse(null);
+
+        if (employee == null) {
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body("Employee not found");
+        }
 
         employee.setName(updatedDetails.getName());
         employee.setPhoneNumber(updatedDetails.getPhoneNumber());
@@ -69,6 +104,7 @@ public class EmployeeAuthController {
         employee.setAddress(updatedDetails.getAddress());
         employee.setDateOfBirth(updatedDetails.getDateOfBirth());
 
-        return employeeRepository.save(employee);
+        return ResponseEntity.ok(employeeRepository.save(employee));
     }
 }
+

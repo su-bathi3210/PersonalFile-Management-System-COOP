@@ -10,16 +10,21 @@ import AdminDashboard from "./Components/Admin/AdminDashboard";
 import EmployeeDashboard from "./Components/Employee/EmployeeDashboard";
 import AddEmployee from "./Components/Admin/AddEmployee";
 import NavBar from "./Components/NavBar/NavBar";
+import AdminNavBar from "./Components/NavBar/AdminNavBar";
 
-function AppContent() {
+function App() {
   const location = useLocation();
 
-  // Hide navbar on login page
-  const hideNavbar = location.pathname === "/";
+  const adminRoutes = ["/AdminDashboard", "/AddEmployee"];
+
+  const isAdminPage = adminRoutes.includes(location.pathname);
+  const isLoginPage = location.pathname === "/";
 
   return (
     <>
-      {!hideNavbar && <NavBar />}
+      {!isLoginPage && !isAdminPage && <NavBar />}
+
+      {isAdminPage && <AdminNavBar />}
 
       <Routes>
         <Route path="/" element={<Login />} />
@@ -32,4 +37,4 @@ function AppContent() {
   );
 }
 
-export default AppContent;
+export default App;

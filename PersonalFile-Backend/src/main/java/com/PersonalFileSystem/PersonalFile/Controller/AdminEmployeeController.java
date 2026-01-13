@@ -2,6 +2,8 @@ package com.PersonalFileSystem.PersonalFile.Controller;
 
 import com.PersonalFileSystem.PersonalFile.Model.Employee;
 import com.PersonalFileSystem.PersonalFile.Repository.EmployeeRepository;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
@@ -17,31 +19,51 @@ public class AdminEmployeeController {
         this.employeeRepository = employeeRepository;
     }
 
+    // ===================== ADD EMPLOYEE =====================
     @PostMapping("/add")
-    public String addEmployee(@RequestBody Employee employee) {
-        employeeRepository.findByEmail(employee.getEmail()).ifPresent(e -> {
-            throw new RuntimeException("Employee already exists");
-        });
+    public ResponseEntity<?> addEmployee(@RequestBody Employee employee) {
+
+        employee.setEmail(employee.getEmail().toLowerCase());
+
+        if (employeeRepository.existsByEmail(employee.getEmail())) {
+            return ResponseEntity
+                    .status(HttpStatus.CONFLICT)
+                    .body("Employee already exists");
+        }
 
         employeeRepository.save(employee);
-        return "Employee added successfully";
+        return ResponseEntity.ok("Employee added successfully");
     }
 
+    // ===================== GET ALL =====================
     @GetMapping("/all")
-    public List<Employee> getAllEmployees() {
-        return employeeRepository.findAll();
+    public ResponseEntity<List<Employee>> getAllEmployees() {
+        return ResponseEntity.ok(employeeRepository.findAll());
     }
 
+    // ===================== GET BY ID =====================
     @GetMapping("/{id}")
-    public Employee getEmployeeById(@PathVariable String id) {
+    public ResponseEntity<Object> getEmployeeById(@PathVariable String id) {
+
         return employeeRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Employee not found"));
+                .<ResponseEntity<Object>>map(ResponseEntity::ok)
+                .orElse(ResponseEntity
+                        .status(HttpStatus.NOT_FOUND)
+                        .body("Employee not found"));
     }
 
+    // ===================== UPDATE =====================
     @PutMapping("/update/{id}")
-    public Employee updateEmployee(@PathVariable String id, @RequestBody Employee employeeDetails) {
-        Employee employee = employeeRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Employee not found"));
+    public ResponseEntity<?> updateEmployee(@PathVariable String id,
+                                            @RequestBody Employee employeeDetails) {
+
+        Employee employee = employeeRepository.findById(id).orElse(null);
+
+        if (employee == null) {
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body("Employee not found");
+        }
 
         employee.setName(employeeDetails.getName());
         employee.setPhoneNumber(employeeDetails.getPhoneNumber());
@@ -61,15 +83,21 @@ public class AdminEmployeeController {
         employee.setDateOfReceiptGradeIII(employeeDetails.getDateOfReceiptGradeIII());
         employee.setDateOfCompulsoryRetirement(employeeDetails.getDateOfCompulsoryRetirement());
 
-        return employeeRepository.save(employee);
+        return ResponseEntity.ok(employeeRepository.save(employee));
     }
 
+    // ===================== DELETE =====================
     @DeleteMapping("/delete/{id}")
-    public String deleteEmployee(@PathVariable String id) {
+    public ResponseEntity<?> deleteEmployee(@PathVariable String id) {
+
         if (!employeeRepository.existsById(id)) {
-            throw new RuntimeException("Employee not found");
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body("Employee not found");
         }
+
         employeeRepository.deleteById(id);
-        return "Employee deleted successfully";
+        return ResponseEntity.ok("Employee deleted successfully");
     }
 }
+
